@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+ #!/usr/bin/env Rscript
 library(randomForest)
 
 # perform the classification
