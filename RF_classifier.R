@@ -2,9 +2,6 @@
 library(randomForest)
 
 # perform the classification
-# model: RDA/randomForest.v31.rda for single tumors
-# model: RDA/randomForest.v17.rda for multiple tumors
-# 
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -154,10 +151,11 @@ if (args[3]==1){
 	  'T2_BAF_s40M','LOFMut','logBinomP','T2_logBinomP',
 	  'T2_VAFdiff','aVAF','T2_aVAF'
 	  )
+	sg_d <- data[is.na(data$T2_VAF),]  # for sites with missing T2 inforation, use the single-tumor model
+	data <- data[!is.na(data$T2_VAF),]	
 }
 
 ## RF
-## Significant Features
 td <- data[,feat]
 require(randomForest)
 # load the model
@@ -171,10 +169,29 @@ if(file.exists(rf_model)){
 }else{
   stop(paste0("Missing model file: ",rf_model), call.=FALSE)
 }
-# td_pred <- predict(x.rf, type="class", newdata=td)
 somatic_cutoff <- 0.5  # the default value
 td_prob <- predict(x.rf, type="prob", newdata=td)
 data$somatic_prob <- td_prob[,2]
+if(args[3] > 1 & nrow(sg_d) > 0){
+	feat <- c(
+	  'PopFreqMax','snp138','SIFT','Polyphen2_HDIV',
+	  'MutationAssessor','PROVEAN','VEST3','CADD_phred',
+	  'DANN','fathmm_MKL_coding','MetaSVM','MetaLR','GERP',
+	  'phyloP20way_mammalian', 'phastCons7way_vertebrate',
+	  'phastCons20way_mammalian','SiPhy_29way_logOdds',
+	  'VarDP','VAF','BAF_s40M','LOFMut','logBinomP','aVAF'
+	  )
+	rf_model <- paste0(args[1],"/RF.single.rda")
+	td <- sg_d[,feat]
+	if(file.exists(rf_model)){
+	  load(rf_model)
+	}else{
+	  stop(paste0("Missing model file: ",rf_model), call.=FALSE)
+	}
+	td_prob <- predict(x.rf, type="prob", newdata=td)
+	sg_d$somatic_prob <- td_prob[,2]
+	data <- rbind(data,sg_d)
+}
 
 # output predicted somatic variants
 out <- paste0(args[4],".somatic.txt")
@@ -183,6 +200,8 @@ write.table(data[data$somatic_prob > somatic_cutoff,],out,row.names = F, sep = "
 # output predicted non-somatic variants
 out <- paste0(args[4],".non-somatic.txt")
 write.table(data[data$somatic_prob <= somatic_cutoff,],out,row.names = F, sep = "\t" )
+
+
 
 # test if an evaluation is needed
 nvaf_na <- summary(is.na(data$N_VAF))
@@ -216,4 +235,8 @@ if (nvaf_count >= 10){
   colnames(perf_rep) <- c('ID','TN','FP','FN','TP')
   write.table(perf_rep, out, row.names = F, sep = "\t")
 }
+
+# Saving the image for future inquiry 
+# save.image("Rdata/somaticID.v01.rdata")
+
 

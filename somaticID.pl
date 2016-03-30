@@ -19,11 +19,11 @@ my $non_silent_filter = "$somaticID_dir/nonsilent_filter_for_annovarVCF.pl";
 my $rmAdj             = "$somaticID_dir/rm_adj_error_VCF.pl";
 my $rfc               = "$somaticID_dir/RF_classifier.R";
 my $mod_dir           = "$somaticID_dir/RDA";
+die( "Could not find directory $somaticID_dir/RDA\n" ) unless -d $mod_dir;
 
 ## Check necessary files
 die( "Could not find RF_classifier.R in the directory $somaticID_dir\n" )
   unless -f $rfc;
-die( "Could not find directory $somaticID_dir/RDA\n" ) unless -d $mod_dir;
 die(
 "Could not find executable nonsilent_filter_for_annovarVCF.pl in the directory $somaticID_dir\n"
 ) unless -x $non_silent_filter;
@@ -42,8 +42,10 @@ my $annovar_protocol =
 my $annovar_operation = "g,r,f,f,f,f,f,f,f,f";
 my $buildver          = "hg19";
 my $ref;
-my ( $novar, $noanno );
+my ( $novar, $noanno, $nopred );
 my $adj_d = 0;
+my $selfmodel;
+my $help;
 GetOptions(
     "normal=s"     => \$nbam,
     "output=s"     => \$pfx,
@@ -59,15 +61,24 @@ GetOptions(
     "mkfifo=s"     => \$mkfifo,
     "novarcall!"   => \$novar,
     "noanno!"      => \$noanno,
-    "rmAdjErr=i"   => \$adj_d
+	"nopred!"      => \$nopred,
+	"selfmodel!"   => \$selfmodel,
+    "rmAdjErr=i"   => \$adj_d,
+	"help!"        => \$help
 ) or &Usage;
 
+&Usage if $help;
 my $n_tum = $#ARGV + 1;
 &Usage unless $n_tum > 0;
 my $tbams = join " ", @ARGV;
 my $ltime = localtime();
 print "[$ltime] There are $n_tum tumors.\n" if $nbam;
 print "[$ltime] We have normal data!\n"     if $nbam;
+
+if($selfmodel){
+	$mod_dir = "$somaticID_dir/self_trained_RDA";
+	die( "Could not find directory $mod_dir\n" ) unless -d $mod_dir;
+}
 
 # create a directory for all the output files 
 my $od        = "$pfx.somaticID";
@@ -80,7 +91,6 @@ unless ($noanno) {
 }
 
 unless ( $novar or $noanno ) {
-
 	$ltime = localtime();
     print "[$ltime] Calling Variants using SAMtools and VarScan programs\n";
     &make_mpileup_fifo;
@@ -225,27 +235,28 @@ unless ($noanno) {
     &tabulate( "$od/$pfx.flt.snp.nonsilent.vcf",   "$od/$pfx.snp.tab" );
     &tabulate( "$od/$pfx.flt.indel.nonsilent.vcf", "$od/$pfx.indel.tab" );
 }
-
-$ltime = localtime();
-print "[$ltime] Classify somatic and non-somatic mutations\n";
-system("$rscript $rfc $mod_dir $od/$pfx.snp.tab $n_tum $od/$pfx");
-&som_ind;   # classify indels by simple cutoffs
-# Resume VCF files from the predicted results
-my @sfxs = qw(
-      somatic non-somatic CommonSNPs
-      LowQualityMutations UnknownMutationType
-    );
-foreach my $sf (@sfxs) {
-    my $infile = "$od/$pfx.$sf.txt";
-	my $ori_vcf = "$od/$pfx.flt.snp.nonsilent.vcf";
-	my $outfile = "$od/$pfx.$sf.snp.vcf";
-	&re_VCF($sf, $infile, $ori_vcf, $outfile);
-}
-foreach my $sf (@sfxs[0,1]) {
-    my $infile = "$od/$pfx.$sf.indel.txt";
-	my $ori_vcf = "$od/$pfx.flt.indel.nonsilent.vcf";
-	my $outfile = "$od/$pfx.$sf.indel.vcf";
-	&re_VCF($sf, $infile, $ori_vcf, $outfile);
+unless ($nopred) {
+	$ltime = localtime();
+	print "[$ltime] Classify somatic and non-somatic mutations\n";
+	system("$rscript $rfc $mod_dir $od/$pfx.snp.tab $n_tum $od/$pfx");
+	&som_ind;   # classify indels by simple cutoffs
+	# Resume VCF files from the predicted results
+	my @sfxs = qw(
+	      somatic non-somatic CommonSNPs
+	      LowQualityMutations UnknownMutationType
+	    );
+	foreach my $sf (@sfxs) {
+	    my $infile = "$od/$pfx.$sf.txt";
+		my $ori_vcf = "$od/$pfx.flt.snp.nonsilent.vcf";
+		my $outfile = "$od/$pfx.$sf.snp.vcf";
+		&re_VCF($sf, $infile, $ori_vcf, $outfile);
+	}
+	foreach my $sf (@sfxs[0,1]) {
+	    my $infile = "$od/$pfx.$sf.indel.txt";
+		my $ori_vcf = "$od/$pfx.flt.indel.nonsilent.vcf";
+		my $outfile = "$od/$pfx.$sf.indel.vcf";
+		&re_VCF($sf, $infile, $ori_vcf, $outfile);
+	}
 }
 
 
@@ -308,10 +319,10 @@ sub tabulate {
         # ignore variants with more than one mutant alleles
         next if $a[4] =~ /,/;
         my $var_id = join "|", @a[ 0, 1, 3, 4 ];
-        if ( $a[7] =~ /PopFreqMax=([01].*);gerp\S+;snp\d+=rs\d+;SIFT/ )
-        {    # exclude dbSNP sites with PopFreqMax >= 0.01
-            next if $1 >= 0.01;
-        }
+#        if ( $a[7] =~ /PopFreqMax=([01].*);gerp\S+;snp\d+=rs\d+;SIFT/ )
+#        {    # exclude dbSNP sites with PopFreqMax >= 0.01
+#            next if $1 >= 0.01;
+#        }
         $a[7] =~ s/;snp138=\.;/;snp138=0;/
           ; # For some features, replace "." with "0" to avoid being replaced as "NA".
         $a[7] =~ s/;Interpro_domain=\.;/;Interpro_domain=0;/;
@@ -597,6 +608,7 @@ OPTIONS:
 	--rmAdjErr INT             Remove adjcent errors that locate within INT bp range [0]
 	--novarcall                Let the program start from annotation, requires VCF files from VarScan 2
 	--noanno                   Let the program start from somatic mutation identification, requires VCF files annotated by specific protocol
+	--nopred                   Do not predict somatic mutations at this time (only generate TAB files for within-study model training)
 	--samtools|-s STRING       Path to SAMtools program [samtools]
 	--varscan STRING           Path to VarScan.xxx.jar [~\/bin\/VarScan.v2.3.6.jar]
 	--annovardir STRING        Path to the ANNOVAR program (tested version: 2015-12-14) directory [~\/bin\/annovar]
@@ -606,6 +618,7 @@ OPTIONS:
 	--memory|-me xxG\/M         Max memory for java [16G]
 	--tmpjava|-t STRING        Position of a new tmp dir for java [\/tmp]
 	--buildver|-b hgXX         Build version of human genome reference sequences [hg19]
+	--help|-h                  Print this page
 \n/
     );
 }
