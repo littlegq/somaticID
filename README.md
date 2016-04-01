@@ -62,7 +62,7 @@ All the output files will be put in a subdirectory Case1.somaticID, including:
   Case1.somaticID/Case1.snp.tab
   ...
 ```
-## Condition 2: Trained models using new data and identify somatic mutations
+## Condition 2: Train models using new data and identify somatic mutations
 Input:
 ```Bash
   Case1.Tumor1.bam
