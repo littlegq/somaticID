@@ -24,12 +24,30 @@ Command:
 ```Bash
   ./somaticID.pl [OPTIONS] -o Case1 -ref genome.fa Case1.Tumor1.bam Case1.Tumor2.bam [...]
 ```
-All the output files will be included in a subdirectory Case1.somaticID: 
+All the output files will be put in a subdirectory Case1.somaticID, including: 
+* The non-silent somatic variations:
+```Bash
+  Case1.somaticID/Case1.somatic.indel.vcf
+  Case1.somaticID/Case1.somatic.snp.vcf
+  ...
+```
+* The non-silent, non-somatic variations: 
+```Bash
+  Case1.somaticID/Case1.non-somatic.indel.vcf
+  Case1.somaticID/Case1.non-somatic.snp.vcf
+  Case1.somaticID/Case1.CommonSNPs.snp.vcf
+  ...
+```
+* SNPs with low-quality or unknown mutation types : 
+```Bash
+  Case1.somaticID/Case1.LowQualityMutations.snp.vcf
+  Case1.somaticID/Case1.UnknownMutationType.snp.vcf
+  ...
+```
+* Other intermediate files that may be useful: 
 ```Bash
   Case1.somaticID/Case1.adjUnRM.indel.vcf
   Case1.somaticID/Case1.adjUnRM.snp.vcf
-  Case1.somaticID/Case1.CommonSNPs.snp.vcf
-  Case1.somaticID/Case1.CommonSNPs.txt
   Case1.somaticID/Case1.flt.indel.hg19_multianno.txt
   Case1.somaticID/Case1.flt.indel.hg19_multianno.vcf
   Case1.somaticID/Case1.flt.indel.nonsilent.vcf
@@ -39,21 +57,9 @@ All the output files will be included in a subdirectory Case1.somaticID:
   Case1.somaticID/Case1.flt.snp.nonsilent.vcf
   Case1.somaticID/Case1.flt.snp.vcf
   Case1.somaticID/Case1.indel.tab
-  Case1.somaticID/Case1.LowQualityMutations.snp.vcf
-  Case1.somaticID/Case1.LowQualityMutations.txt
-  Case1.somaticID/Case1.non-somatic.indel.txt
-  Case1.somaticID/Case1.non-somatic.indel.vcf
-  Case1.somaticID/Case1.non-somatic.snp.vcf
-  Case1.somaticID/Case1.non-somatic.txt
   Case1.somaticID/Case1.raw.indel.vcf
   Case1.somaticID/Case1.raw.snp.vcf
   Case1.somaticID/Case1.snp.tab
-  Case1.somaticID/Case1.somatic.indel.txt
-  Case1.somaticID/Case1.somatic.indel.vcf
-  Case1.somaticID/Case1.somatic.snp.vcf
-  Case1.somaticID/Case1.somatic.txt
-  Case1.somaticID/Case1.UnknownMutationType.snp.vcf
-  Case1.somaticID/Case1.UnknownMutationType.txt
   ...
 ```
 ## Condition 2: Trained models using new data and identify somatic mutations
