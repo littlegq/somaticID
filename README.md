@@ -49,7 +49,7 @@ All the output files will be included in a subdirectory Case1.somaticID:
   Case1.somaticID/Case1.UnknownMutationType.snp.vcf
   Case1.somaticID/Case1.UnknownMutationType.txt
 
-###### Condition 1: Trained models using new data and identify somatic mutations ######
+###### Condition 2: Trained models using new data and identify somatic mutations ######
 Input:
   Case1.Tumor1.bam
   Case1.Tumor2.bam
