@@ -74,12 +74,12 @@ Input:
     ./somaticID.pl [OPTIONS] -o $case_id -ref genome.fa \
       --nopred --normal $case_id.Normal.bam \
       $case_id.Tumor1.bam $case_id.Tumor2.bam
-	done
+  done
 	for case_id in "Case3"
   do
     ./somaticID.pl [OPTIONS] -o $case_id -ref genome.fa \
       --nopred $case_id.Tumor1.bam $case_id.Tumor2.bam
-	done
+  done
 ```
 
 2) Train new models based on cases with match normal data
