@@ -76,7 +76,7 @@ Input:
   ...
 ```
 ##### A three-step precedure:
-1) For each case, identify mutations from BAM files without somatic mutation prediction. Option --nopred is used to prevent calling somatic mutations with pre-trained models. Note that for samples with matched normal samples, option --normal was used.
+1) For each case, identify mutations from BAM files without somatic mutation prediction. Option ```--nopred``` is used to prevent calling somatic mutations with pre-trained models. Note that for samples with matched normal samples, option ```--normal``` was used.
 
 ```Bash
   for case_id in "Case1" "Case2"
