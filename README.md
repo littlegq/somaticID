@@ -18,7 +18,7 @@ Input:
   ...
 ```
 
-Please note the PCR duplication should be already marked or removed from the input BAM files. For details, please refer to Picard’s MarkDuplicates or SAMtools’ rmdup.
+Please note the PCR duplication should be already marked or removed from the input BAM files. For details, please refer to [Picard’s MarkDuplicates](http://broadinstitute.github.io/picard/command-line-overview.html#MarkDuplicates) or [SAMtools’ rmdup](http://www.htslib.org/doc/samtools.html).
 
 Command:
 ```Bash
