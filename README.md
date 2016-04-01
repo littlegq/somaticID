@@ -81,14 +81,13 @@ Input:
       --nopred $case_id.Tumor1.bam $case_id.Tumor2.bam
 	done
 ```
-2. Train new models based on cases with match normal data
-
 
 2. Train new models based on cases with match normal data
 
 ```Bash
 ...	./somaticID.train.pl --tabfiles Case1.tab,Case2.tab
 ```
+
 3. Identify the somatic mutations based on self-trained models with option --selfmodel
 
 ```Bash
