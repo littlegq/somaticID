@@ -9,11 +9,12 @@ For manual, please use
 	./somaticID.train.pl -h
 
 ## Condition 1: Identify somatic mutations based on pre-trained models in single cases
-======
 
 Input:
+```Bash
   Case1.Tumor1.bam
   Case1.Tumor2.bam
+```
 
 Please note the PCR duplication should be already marked or removed from the input BAM files. For details, please refer to Picard’s MarkDuplicates or SAMtools’ rmdup.
 
@@ -53,8 +54,6 @@ All the output files will be included in a subdirectory Case1.somaticID:
   Case1.somaticID/Case1.UnknownMutationType.txt
 ```
 ## Condition 2: Trained models using new data and identify somatic mutations
-======
-
 Input:
 ```Bash
   Case1.Tumor1.bam
@@ -66,9 +65,8 @@ Input:
   Case3.Tumor1.bam
   Case3.Tumor2.bam
 ```
-A three-step precedure:
-
-1) For each case, identify mutations from BAM files without somatic mutation prediction. Option --nopred is used to prevent calling somatic mutations with pre-trained models. Note that for samples with matched normal samples, option --normal was used.
+### A three-step precedure:
+1. For each case, identify mutations from BAM files without somatic mutation prediction. Option --nopred is used to prevent calling somatic mutations with pre-trained models. Note that for samples with matched normal samples, option --normal was used.
 ```Bash
   for case_id in "Case1" "Case2"
   do
@@ -82,11 +80,11 @@ A three-step precedure:
       --nopred $case_id.Tumor1.bam $case_id.Tumor2.bam
 	done
 ```
-2) Train new models based on cases with match normal data
+2. Train new models based on cases with match normal data
 ```Bash
 	./somaticID.train.pl --tabfiles Case1.tab,Case2.tab
 ```
-3) Identify the somatic mutations based on self-trained models with option --selfmodel
+3. Identify the somatic mutations based on self-trained models with option --selfmodel
 ```Bash
 	./somaticID.pl [OPTIONS] -o Case3 -ref genome.fa --noanno \
 		--selfmodel Case3.Tumor1.bam Case3.Tumor2.bam
