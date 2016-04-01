@@ -14,13 +14,14 @@ Input:
 ```Bash
   Case1.Tumor1.bam
   Case1.Tumor2.bam
+  ...
 ```
 
 Please note the PCR duplication should be already marked or removed from the input BAM files. For details, please refer to Picard’s MarkDuplicates or SAMtools’ rmdup.
 
 Command:
 ```Bash
-  ./somaticID.pl [OPTIONS] -o Case1 -ref genome.fa Case1.Tumor1.bam Case1.Tumor1.bam
+  ./somaticID.pl [OPTIONS] -o Case1 -ref genome.fa Case1.Tumor1.bam Case1.Tumor2.bam [...]
 ```
 All the output files will be included in a subdirectory Case1.somaticID: 
 ```Bash
@@ -52,6 +53,7 @@ All the output files will be included in a subdirectory Case1.somaticID:
   Case1.somaticID/Case1.somatic.txt
   Case1.somaticID/Case1.UnknownMutationType.snp.vcf
   Case1.somaticID/Case1.UnknownMutationType.txt
+  ...
 ```
 ## Condition 2: Trained models using new data and identify somatic mutations
 Input:
@@ -64,6 +66,7 @@ Input:
   Case2.Normal.bam
   Case3.Tumor1.bam
   Case3.Tumor2.bam
+  ...
 ```
 ### A three-step precedure:
 1) For each case, identify mutations from BAM files without somatic mutation prediction. Option --nopred is used to prevent calling somatic mutations with pre-trained models. Note that for samples with matched normal samples, option --normal was used.
