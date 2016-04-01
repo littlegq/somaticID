@@ -67,6 +67,9 @@ Input:
 ```
 ### A three-step precedure:
 1. For each case, identify mutations from BAM files without somatic mutation prediction. Option --nopred is used to prevent calling somatic mutations with pre-trained models. Note that for samples with matched normal samples, option --normal was used.
+ 
+
+
 
 ```Bash
   for case_id in "Case1" "Case2"
@@ -85,12 +88,12 @@ Input:
 2. Train new models based on cases with match normal data
 
 ```Bash
-...	./somaticID.train.pl --tabfiles Case1.tab,Case2.tab
+	./somaticID.train.pl --tabfiles Case1.tab,Case2.tab
 ```
 
 3. Identify the somatic mutations based on self-trained models with option --selfmodel
 
 ```Bash
-...	./somaticID.pl [OPTIONS] -o Case3 -ref genome.fa --noanno \
-...		--selfmodel Case3.Tumor1.bam Case3.Tumor2.bam
+	./somaticID.pl [OPTIONS] -o Case3 -ref genome.fa --noanno \
+		--selfmodel Case3.Tumor1.bam Case3.Tumor2.bam
 ```
