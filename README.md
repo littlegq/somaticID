@@ -5,15 +5,12 @@ somaticID is a computational pipeline to identify somatic mutations when there i
 somaticID works with two conditions. To identify somatic mutations from samples from a single case, or multiple cases without matched normal data, a pre-trained model can be used; for datasets from multiple cases with similar conditions (tumor content, sequencing method, etc), and some of them have available matched normal data, new models can be trained with the cases with normal data, and then be used to identify somatic mutations from other cases. 
 
 For manual, please use
-
 	./somaticID.pl -h
-	
 	./somaticID.train.pl -h
 
 ###### Condition 1: Identify somatic mutations based on pre-trained models in single cases ######
 
 Input:
-
   Case1.Tumor1.bam
   Case1.Tumor2.bam
 
