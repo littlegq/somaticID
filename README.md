@@ -84,7 +84,7 @@ Input:
 ```Bash
 	./somaticID.train.pl --tabfiles Case1.tab,Case2.tab
 ```
-3. Identify the somatic mutations based on self-trained models with option --selfmodel
+4. Identify the somatic mutations based on self-trained models with option --selfmodel
 ```Bash
 	./somaticID.pl [OPTIONS] -o Case3 -ref genome.fa --noanno \
 		--selfmodel Case3.Tumor1.bam Case3.Tumor2.bam
