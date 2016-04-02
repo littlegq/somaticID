@@ -104,4 +104,4 @@ All the output files will be put in a subdirectory ```Case1.somaticID```, includ
 	./somaticID.pl [OPTIONS] -o Case3 -ref genome.fa --noanno \
 		--selfmodel Case3.Tumor1.bam Case3.Tumor2.bam
 ```
-The output files for each cases will be put in seperate subdirectories, with similar name suffixes as noted above.
+The output files for each case will be put in seperate subdirectories, with similar name suffixes as noted above.
