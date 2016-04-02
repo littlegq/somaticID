@@ -64,7 +64,7 @@ GetOptions(
     "nopred!"      => \$nopred,
     "selfmodel!"   => \$selfmodel,
     "rmAdjErr=i"   => \$adj_d,
-	"help!"        => \$help
+    "help!"        => \$help
 ) or &Usage;
 
 &Usage if $help;
