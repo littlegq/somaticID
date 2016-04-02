@@ -1,6 +1,6 @@
 # somaticID
 
-somaticID is a computational pipeline to identify somatic mutations when there is no matched normal data. It calls variants mutations from BAM files with [VarScan 2](http://varscan.sourceforge.net/), annotates the variants with [ANNOVAR](http://annovar.openbioinformatics.org/en/latest/) and identify non-synonymous somatic variants based on random forest models.
+```somaticID``` is a computational pipeline to identify somatic mutations when there is no matched normal data. It calls variants mutations from BAM files with [VarScan 2](http://varscan.sourceforge.net/), annotates the variants with [ANNOVAR](http://annovar.openbioinformatics.org/en/latest/) and identify non-synonymous somatic variants based on random forest models.
 
 somaticID works with two conditions. To identify somatic mutations from samples from a single case, or multiple cases without matched normal data, a pre-trained model can be used; for datasets from multiple cases with similar conditions (tumor content, sequencing method, etc), and some of them have available matched normal data, new models can be trained with the cases with normal data, and then be used to identify somatic mutations from other cases. 
 
