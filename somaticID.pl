@@ -138,8 +138,6 @@ unless ( $novar or $noanno ) {
 my ( %mean_baf, %sumbaf, %nbaf );
 unless ($noanno) {
 
-#    die("Missing file: $od/$pfx.flt.snp.vcf\n")   unless -f "$od/$pfx.flt.snp.vcf";
-#    die("Missing file: $od/$pfx.flt.indel.vcf\n") unless -f "$od/$pfx.flt.indel.vcf";
     die("Missing file: $od/$pfx.flt.snp.vcf\n")   unless -f "$od/$pfx.flt.snp.vcf";
     die("Missing file: $od/$pfx.flt.indel.vcf\n") unless -f "$od/$pfx.flt.indel.vcf";
     $ltime = localtime();
@@ -240,6 +238,7 @@ unless ($nopred) {
 	print "[$ltime] Classify somatic and non-somatic mutations\n";
 	system("$rscript $rfc $mod_dir $od/$pfx.snp.tab $n_tum $od/$pfx");
 	&som_ind;   # classify indels by simple cutoffs
+	
 	# Resume VCF files from the predicted results
 	my @sfxs = qw(
 	      somatic non-somatic CommonSNPs
@@ -250,12 +249,14 @@ unless ($nopred) {
 		my $ori_vcf = "$od/$pfx.flt.snp.nonsilent.vcf";
 		my $outfile = "$od/$pfx.$sf.snp.vcf";
 		&re_VCF($sf, $infile, $ori_vcf, $outfile);
+		system("rm $infile");
 	}
 	foreach my $sf (@sfxs[0,1]) {
 	    my $infile = "$od/$pfx.$sf.indel.txt";
 		my $ori_vcf = "$od/$pfx.flt.indel.nonsilent.vcf";
 		my $outfile = "$od/$pfx.$sf.indel.vcf";
 		&re_VCF($sf, $infile, $ori_vcf, $outfile);
+		system("rm $infile");
 	}
 }
 
@@ -264,24 +265,27 @@ sub make_mpileup_fifo {
     system("$mkfifo $pfx.mpileup.fifo");
     if ($nbam) {
         system(
-"$samtools mpileup -B -q 37 -f $ref $tbams $nbam > $pfx.mpileup.fifo &"
+			"$samtools mpileup -B -q 37 -f $ref $tbams $nbam > $pfx.mpileup.fifo &"
         );
     }
     else {
         system(
-            "$samtools mpileup -B -q 37 -f $ref $tbams > $pfx.mpileup.fifo &");
+            "$samtools mpileup -B -q 37 -f $ref $tbams > $pfx.mpileup.fifo &"
+		);
     }
 }
 
-sub annovar_database_file_check
-{    # check the existance of database files for ANNOVAR
+# check the existance of database files for ANNOVAR
+sub annovar_database_file_check {
     my @anno_ptc = split /,/, $annovar_protocol;
     foreach my $ap (@anno_ptc) {
         next if -f "$annovardir/humandb/$buildver\_$ap.txt";
-        for ( my $i = 0 ; $i < 3 ; $i++ )
-        {    # Try three times for downloading before quit the program
+        
+		# Try three times for downloading before quit the program
+        for ( my $i = 0 ; $i < 3 ; $i++ ) {
             system(
-"$annovardir/annotate_variation.pl -buildver $buildver -downdb -webfrom annovar $ap $annovardir/humandb/"
+				"$annovardir/annotate_variation.pl -buildver $buildver \\
+					-downdb -webfrom annovar $ap $annovardir/humandb/"
             ) unless -f "$annovardir/humandb/$buildver\_$ap.txt";
         }
         die( "
@@ -292,23 +296,21 @@ Downloading guide: http://annovar.openbioinformatics.org/en/latest/user-guide/do
     }
 }
 
-# Transfer ANNOVAR-annoated VCF files into tab-deliminated files, removing dbSNP sites with PopFreqMax >= 0.01
+# Transfer ANNOVAR-annoated VCF files into tab-deliminated files, 
+# removing dbSNP sites with PopFreqMax >= 0.01
 sub tabulate {
     my $out_tab_file = $_[1];
     open( my $fh, '>', $out_tab_file )
       or die("Could not open file $out_tab_file $!");
     my $header = join "\t",
-      "SampleID", "VarID", "MutType", "PopFreqMax",
-      "nci60", "clinvar", "cosmic70", "snp138", "SIFT",
-      "Polyphen2_HDIV", "LRT", "MutationTaster", "MutationAssessor", "FATHMM",
-      "PROVEAN", "VEST3", "CADD_phred", "DANN", "fathmm_MKL_coding",
-      "MetaSVM", "MetaLR", "integrated_fitCons", "GERP",
-      "phyloP7way_vertebrate",    "phyloP20way_mammalian",
-      "phastCons7way_vertebrate", "phastCons20way_mammalian",
-      "SiPhy_29way_logOdds", "Interpro_domain", "dbscSNV_ADA", "dbscSNV_RF",
-      "RefDP",    "VarDP",    "VAF",    "BAF_s40M",
-      "T2_RefDP", "T2_VarDP", "T2_VAF", "T2_BAF_s40M",
-      "N_RefDP",  "N_VarDP",  "N_VAF";
+      "SampleID", "VarID", "MutType", "PopFreqMax", "nci60", "clinvar", 
+	  "cosmic70", "snp138", "SIFT", "Polyphen2_HDIV", "LRT", "MutationTaster", 
+	  "MutationAssessor", "FATHMM", "PROVEAN", "VEST3", "CADD_phred", "DANN", 
+	  "fathmm_MKL_coding", "MetaSVM", "MetaLR", "integrated_fitCons", "GERP",
+      "phyloP7way_vertebrate", "phyloP20way_mammalian", "phastCons7way_vertebrate", 
+	  "phastCons20way_mammalian", "SiPhy_29way_logOdds", "Interpro_domain", 
+	  "dbscSNV_ADA", "dbscSNV_RF", "RefDP",    "VarDP",    "VAF",    "BAF_s40M",
+      "T2_RefDP", "T2_VarDP", "T2_VAF", "T2_BAF_s40M", "N_RefDP",  "N_VarDP",  "N_VAF";
     print $fh "$header\n";
     open IN, $_[0] or die($!);
     while (<IN>) {
@@ -319,12 +321,9 @@ sub tabulate {
         # ignore variants with more than one mutant alleles
         next if $a[4] =~ /,/;
         my $var_id = join "|", @a[ 0, 1, 3, 4 ];
-#        if ( $a[7] =~ /PopFreqMax=([01].*);gerp\S+;snp\d+=rs\d+;SIFT/ )
-#        {    # exclude dbSNP sites with PopFreqMax >= 0.01
-#            next if $1 >= 0.01;
-#        }
-        $a[7] =~ s/;snp138=\.;/;snp138=0;/
-          ; # For some features, replace "." with "0" to avoid being replaced as "NA".
+        
+		# For some features, replace "." with "0" to avoid being replaced as "NA".
+        $a[7] =~ s/;snp138=\.;/;snp138=0;/;
         $a[7] =~ s/;Interpro_domain=\.;/;Interpro_domain=0;/;
         $a[7] =~ s/;Interpro_domain=\S[^;]+;/;Interpro_domain=1;/;
         $a[7] =~ s/;PopFreqMax=\.;/;PopFreqMax=0;/;
@@ -341,23 +340,18 @@ sub tabulate {
         # Reverse MutationTaster score for "N" ("polymorphism")
         # and "P" ("polymorphism_automatic") (1)
         if ( $a[7] =~
-            /;MutationTaster_score=(\S[^;]+);MutationTaster_pred=[NP];/ )
-        {
+            /;MutationTaster_score=(\S[^;]+);MutationTaster_pred=[NP];/ ) {
             $a[7] =~ s/;MutationTaster_score=/;MutationTaster_score=one_minus/;
         }
-
         my @infos = split /;/, $a[7];
         my @feas;
         push @feas, $var_id;
 
-   # The index of @infos is very sensitive to the defination of ANNOVAR protocol
+        # The index of @infos is very sensitive to the defination of ANNOVAR protocol
         foreach my $info (
-            @infos[
-            9,  12 .. 17, 19, 23, 25, 27, 29, 31,
-            33, 35,       36, 37, 39, 41, 43, 45 .. 53
-            ]
-          )
-        {
+            @infos[ 9,  12 .. 17, 19, 23, 25, 27, 29, 31,
+            33, 35, 36, 37, 39, 41, 43, 45 .. 53 ]
+          ) {
             if ( $info =~ /=(\S+)$/ ) {
                 $info = $1;
             }
@@ -609,6 +603,7 @@ OPTIONS:
 	--novarcall                Let the program start from annotation, requires VCF files from VarScan 2
 	--noanno                   Let the program start from somatic mutation identification, requires VCF files annotated by specific protocol
 	--nopred                   Do not predict somatic mutations at this time (only generate TAB files for within-study model training)
+	--selfmodel                Use self-trained models instead of pre-trained models
 	--samtools|-s STRING       Path to SAMtools program [samtools]
 	--varscan STRING           Path to VarScan.xxx.jar [~\/bin\/VarScan.v2.3.6.jar]
 	--annovardir STRING        Path to the ANNOVAR program (tested version: 2015-12-14) directory [~\/bin\/annovar]

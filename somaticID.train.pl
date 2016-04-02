@@ -12,8 +12,8 @@ my $nbam;
 my $somaticID_dir = $0;
 $somaticID_dir =~ s/[^\/]+$//;
 $somaticID_dir = "." unless $somaticID_dir;
-my $rft               = "$somaticID_dir/RF_trainer.R";
-my $mod_dir           = "$somaticID_dir/self_trained_RDA";
+my $rft        = "$somaticID_dir/RF_trainer.R";
+my $mod_dir    = "$somaticID_dir/self_trained_RDA";
 
 ## Check necessary files
 die( "Could not find RF_trainer.R in the directory $somaticID_dir\n" )
