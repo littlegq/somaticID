@@ -61,8 +61,8 @@ GetOptions(
     "mkfifo=s"     => \$mkfifo,
     "novarcall!"   => \$novar,
     "noanno!"      => \$noanno,
-	"nopred!"      => \$nopred,
-	"selfmodel!"   => \$selfmodel,
+    "nopred!"      => \$nopred,
+    "selfmodel!"   => \$selfmodel,
     "rmAdjErr=i"   => \$adj_d,
 	"help!"        => \$help
 ) or &Usage;
