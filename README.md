@@ -11,7 +11,7 @@ For manual, please use
 ```
 ## Condition 1: Identify somatic mutations based on pre-trained models in single cases
 
-Input:
+##### Input:
 ```Bash
   Case1.Tumor1.bam
   Case1.Tumor2.bam
@@ -20,11 +20,11 @@ Input:
 
 Please note the PCR duplication should be already marked or removed from the input BAM files. For details, please refer to [Picard’s MarkDuplicates](http://broadinstitute.github.io/picard/command-line-overview.html#MarkDuplicates) or [SAMtools’ rmdup](http://www.htslib.org/doc/samtools.html).
 
-Command:
+##### Command:
 ```Bash
   ./somaticID.pl [OPTIONS] -o Case1 -ref genome.fa Case1.Tumor1.bam Case1.Tumor2.bam [...]
 ```
-All the output files will be put in a subdirectory Case1.somaticID, including: 
+##### All the output files will be put in a subdirectory Case1.somaticID, including: 
 * The non-silent somatic variations:
 ```Bash
   Case1.somaticID/Case1.somatic.indel.vcf
@@ -63,7 +63,7 @@ All the output files will be put in a subdirectory Case1.somaticID, including:
   ...
 ```
 ## Condition 2: Train models using new data and identify somatic mutations
-Input:
+##### Input:
 ```Bash
   Case1.Tumor1.bam
   Case1.Tumor2.bam
