@@ -105,3 +105,19 @@ All the output files will be put in a subdirectory ```Case1.somaticID```, includ
 		--selfmodel Case3.Tumor1.bam Case3.Tumor2.bam
 ```
 The output files for each case will be put in a seperate subdirectory, with similar name suffixes as noted above.
+
+### Evaluation Mode
+If ```somaticID``` is run with matched normal data, an evaluation process will performed and a CSV file will be generated to show the performance of somatic identification in given sample.
+##### Input:
+```Bash
+  Case1.Tumor1.bam
+  Case1.Tumor2.bam
+  Case1.Normal.bam
+  ...
+```
+##### Command:
+```Bash
+  ./somaticID.pl [OPTIONS] -o Case1 -ref genome.fa --normal Case1.Normal.bam \
+  	Case1.Tumor1.bam Case1.Tumor2.bam [...]
+```
+The resulted CSV files will be ```Case1.somaticID/Case1.evaluation.txt```.
