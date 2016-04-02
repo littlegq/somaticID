@@ -24,7 +24,7 @@ Please note the PCR duplication should be already marked or removed from the inp
 ```Bash
   ./somaticID.pl [OPTIONS] -o Case1 -ref genome.fa Case1.Tumor1.bam Case1.Tumor2.bam [...]
 ```
-##### All the output files will be put in a subdirectory Case1.somaticID, including: 
+All the output files will be put in a subdirectory ```Case1.somaticID```, including: 
 * The non-silent somatic variations:
 ```Bash
   Case1.somaticID/Case1.somatic.indel.vcf
