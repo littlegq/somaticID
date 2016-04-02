@@ -9,7 +9,7 @@ For manual, please use
 	./somaticID.pl -h
 	./somaticID.train.pl -h
 ```
-## Condition 1: Identify somatic mutations based on pre-trained models in single cases
+### Condition 1: Identify somatic mutations based on pre-trained models in single cases
 
 ##### Input:
 ```Bash
@@ -62,7 +62,7 @@ All the output files will be put in a subdirectory ```Case1.somaticID```, includ
   Case1.somaticID/Case1.snp.tab
   ...
 ```
-## Condition 2: Train models using new data and identify somatic mutations
+### Condition 2: Train models using new data and identify somatic mutations
 ##### Input:
 ```Bash
   Case1.Tumor1.bam
