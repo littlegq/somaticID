@@ -172,7 +172,7 @@ if(file.exists(rf_model)){
 somatic_cutoff <- 0.5  # the default value
 td_prob <- predict(x.rf, type="prob", newdata=td)
 data$somatic_prob <- td_prob[,2]
-if(args[3] > 1 & nrow(sg_d) > 0){
+if(args[3] > 1){
 	feat <- c(
 	  'PopFreqMax','snp138','SIFT','Polyphen2_HDIV',
 	  'MutationAssessor','PROVEAN','VEST3','CADD_phred',
