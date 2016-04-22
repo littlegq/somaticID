@@ -265,12 +265,12 @@ sub make_mpileup_fifo {
     system("$mkfifo $pfx.mpileup.fifo");
     if ($nbam) {
         system(
-			"$samtools mpileup -B -q 37 -f $ref $tbams $nbam > $pfx.mpileup.fifo &"
+			"$samtools mpileup -B -q 37 -d 1000 -f $ref $tbams $nbam > $pfx.mpileup.fifo &"
         );
     }
     else {
         system(
-            "$samtools mpileup -B -q 37 -f $ref $tbams > $pfx.mpileup.fifo &"
+            "$samtools mpileup -B -q 37 -d 1000 -f $ref $tbams > $pfx.mpileup.fifo &"
 		);
     }
 }
