@@ -97,14 +97,14 @@ unless ( $novar or $noanno ) {
     system(
         "$java -Djava.io.tmpdir=$tmpdir -Xmx$memory -jar \\
 		$varscan mpileup2snp $pfx.mpileup.fifo --min-var-freq 0.01 \\
-		--p-value 0.2 --output-vcf 1 > $od/$pfx.raw.snp.vcf"
+		--p-value 0.99 --output-vcf 1 > $od/$pfx.raw.snp.vcf"
     );
     system("rm $pfx.mpileup.fifo");
     &make_mpileup_fifo;
     system(
         "$java -Djava.io.tmpdir=$tmpdir -Xmx$memory -jar \\
 		$varscan mpileup2indel $pfx.mpileup.fifo --min-var-freq 0.01 \\
-		--p-value 0.2 --output-vcf 1 > $od/$pfx.raw.indel.vcf"
+		--p-value 0.99 --output-vcf 1 > $od/$pfx.raw.indel.vcf"
     );
     system("rm $pfx.mpileup.fifo");
 
