@@ -34,6 +34,8 @@ GetOptions(
 &Usage if $help;
 &Usage unless $tabfiles;
 
+$tabfiles =~ s/,/ /g;
+
 my $ltime = localtime();
 print "[$ltime] Classify somatic and non-somatic mutations\n";
 system("$rscript $rft $tabfiles");
