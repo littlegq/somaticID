@@ -264,14 +264,10 @@ unless ($nopred) {
 sub make_mpileup_fifo {
     system("$mkfifo $pfx.mpileup.fifo");
     if ($nbam) {
-        system(
-			"$samtools mpileup -B -q 37 -d 1000 -f $ref $tbams $nbam > $pfx.mpileup.fifo &"
-        );
+        system("$samtools mpileup -B --ff 0xF00 -q 37 -d 1000 -f $ref $tbams $nbam > $pfx.mpileup.fifo &");
     }
     else {
-        system(
-            "$samtools mpileup -B -q 37 -d 1000 -f $ref $tbams > $pfx.mpileup.fifo &"
-		);
+        system("$samtools mpileup -B --ff 0xF00 -q 37 -d 1000 -f $ref $tbams > $pfx.mpileup.fifo &");
     }
 }
 
