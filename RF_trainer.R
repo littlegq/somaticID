@@ -50,7 +50,7 @@ for (i in (1:nrow(data))){
   data$FATHMM[i] <- 1 - (FATHMM[i] + 12.45) / (9.95 + 12.45)
   data$GERP[i] <- (GERP[i] + 12.3) / (6.17 + 12.3)
   data$MutationAssessor[i] <- (MutationAssessor[i] + 5.545) / (5.975 + 5.545)
-  data$MetaSVM[i] <- (MetaSVM[i] - 1.629) / (1.557 + 1.629)
+  data$MetaSVM[i] <- (MetaSVM[i] + 1.629) / (1.557 + 1.629)
   data$phyloP7way_vertebrate[i] <- (phyloP7way_vertebrate[i] + 4.552) / (1.602 + 4.552)
   data$phyloP20way_mammalian[i] <- (phyloP20way_mammalian[i] + 9.336) / (1.199 + 9.336)
   data$CADD_phred[i] <- CADD_phred[i] / 60
