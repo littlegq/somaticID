@@ -115,7 +115,6 @@ unless ( $novar or $noanno ) {
     print " " x 28,
       "--strand-filter 1 (Ignore variants with >90% support on one strand)\n";
     print " " x 28, "--min-var-freq 0.05\n";
-    print " " x 28, "--p-value 0.01\n";
     system(
 "$vcf_filter -i $od/$pfx.raw.snp.vcf --min-var-freq 0.05 -o $od/$pfx.flt.snp.vcf"
     );
