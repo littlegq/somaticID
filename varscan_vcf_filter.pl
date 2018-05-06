@@ -8,15 +8,14 @@ use Getopt::Long;
 ## work similarly as varscan filter
 
 my $ipfi;
-my ( $mcov, $mre2, $strf, $mvfr, $pval, $opfi, $help ) =
-  ( 10, 4, 1, 0.2, 0.01,, );
+my ( $mcov, $mre2, $strf, $mvfr, $opfi, $help ) =
+  ( 10, 4, 1, 0.2, , );
 GetOptions(
     'input|i=s'       => \$ipfi,
     'min-coverage=i'  => \$mcov,
     'min-reads2=i'    => \$mre2,
     'strand-filter:1' => \$strf,
     'min-var-freq=f'  => \$mvfr,
-    'p-value=f'       => \$pval,
     'output-file=s'   => \$opfi,
     'help!'           => \$help,
 );
@@ -38,7 +37,6 @@ while (<IN>) {
             print "##FILTER=<ID=rdp$mcov,Description=\"Quality read depth less than $mcov\">\n";
             print "##FILTER=<ID=vdp$mre2,Description=\"Variant supporting read depth less than $mre2\">\n";
             print "##FILTER=<ID=vaf$mvfr,Description=\"Variant allelic frequency less than $mvfr\">\n";
-            print "##FILTER=<ID=pval$pval,Description=\"P-value of Fisher's exact test less than $pval\">\n";
             $filterheader = 0;
         }
         $filterheader = 1 if /^##FILTER/;
@@ -69,7 +67,6 @@ sub varfilter {
             && $nums[12] <= $nums[5] * 0.9 )
       );                                   # strand-filter
     return $r unless $nums[5] / $nums[3] >= $mvfr;    # min-var-freq
-    return $r unless $nums[7] < $pval;                # p-value
     $r = 1;
 }
 
@@ -86,7 +83,6 @@ OPTIONS:
         --min-reads2    Minimum supporting reads at a position to call variants [4]
         --strand-filter Ignore variants with >90% support on one strand [1]
         --min-var-freq  Minimum variant allele frequency threshold [0.20]
-        --p-value       Default p-value threshold for calling variants [0.01]
         --output-file   File to contain variants passing filters [STDOUT]
         --help\/-h       Print this page
 
